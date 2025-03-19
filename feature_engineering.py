@@ -157,3 +157,27 @@ class FeatureEngineer:
         df = self.volatility_indicators(df)
         df = self.create_datetime_features(df)
         return df
+
+class FeatureEngineeringRL:
+    def __init__(self):
+        pass
+
+    def process_data(self, df):
+        # MACD - Moving Average Convergence Divergence
+        df['MACD'] = ta.trend.macd(df['Close'], window_slow=26, window_fast=12)
+        df['MACD_SIGNAL'] = ta.trend.macd_signal(df['Close'], window_slow=26, window_fast=12, window_sign=9)
+
+        # RSI - Relative Strength Index
+        df['RSI'] = ta.momentum.rsi(df['Close'], window=14)
+
+        # VWAP - Volume Weighted Average Price
+        df['VWAP'] = ta.volume.volume_weighted_average_price(df['High'], df['Low'], df['Close'], df['Volume'])
+
+        # EMA - Exponential Moving Average
+        df['EMA'] = ta.trend.ema_indicator(df['Close'], window=20)
+
+        # Bollinger Bands
+        df['BB_MIDDLE'] = ta.trend.sma_indicator(df['Close'], window=20)  # Middle Band (SMA)
+        df['BB_UPPER'] = ta.volatility.bollinger_hband(df['Close'], window=20, window_dev=2)  # Upper Band
+        df['BB_LOWER'] = ta.volatility.bollinger_lband(df['Close'], window=20, window_dev=2)  # Lower Band
+        return df
